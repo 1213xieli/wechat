@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script>
+	$.ajax({
+		type: "GET",
+		url: "http://zhouzw.natapp1.cc/wechat/getSign?url=http://zhouzw.natapp1.cc/templates/index.html",
+		dataType: "json",
+		success: function (data) {
+			wx.config({
+				debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+				timestamp: data[0],
+				nonceStr: data[1],
+				signature: data[2],
+				appId: "wxe1f87d74e2aa65a4",
+				jsApiList: [
+					'getLocation'
+				]
+			});
+			wx.ready(function(){
+				wx.getLocation({
+					type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+					success: function (res) {
+						alert('经维度', res);
+					}
+				});
+			});
+		}
+	});
+
+
+
+
+</script>
