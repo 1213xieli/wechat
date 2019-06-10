@@ -11,7 +11,7 @@ import java.net.URL;
 /**
  * @ClassName: HttpsUtils HTTPS连接工具类
  * @Description: TODO
- * @Author DingDaWei
+ * @Author xieli
  * @date 2018/7/1715:41
  * @Version 1.0.0
  */
@@ -26,7 +26,7 @@ public class HttpsUtils {
      */
     public static JSONObject sendRequest(String requestUrl, String requestMethod, String outputStr) {
         try {
-            //设置请求参数
+            //设置请求参数{"opencheckindatatype":3,"starttime":1559320721,"endtime":1559666321,"useridlist":["xieli999","xieli"]}
             URL url = new URL(requestUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(requestMethod);

@@ -1,7 +1,7 @@
 package com.example.wechat.util;
 
 /**
- * @Auther: 周作为
+ * @Auther: xieli
  * @Date: 2019/4/30 14:33
  * @Description:
  */

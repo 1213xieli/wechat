@@ -15,6 +15,8 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/fullcalendar/**").addResourceLocations("classpath:/fullcalendar/");
+        registry.addResourceHandler("/layui/**").addResourceLocations("classpath:/layui/");
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/templates/**").addResourceLocations("classpath:/templates/");
         super.addResourceHandlers(registry);

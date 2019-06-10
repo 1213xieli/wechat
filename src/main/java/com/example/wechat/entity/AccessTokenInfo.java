@@ -1,9 +1,9 @@
 package com.example.wechat.entity;
 
 /**
- * AccessToken 微信返回access_token实体
+ * AccessTokenInfo 微信返回access_token实体
  */
-public class AccessToken {
+public class AccessTokenInfo {
 
     /**接口调用凭证 */
     private String access_token;
