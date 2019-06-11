@@ -16,31 +16,28 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 * @Description: 
 * Swagger2配置
 * @Version:1.0.0  
-* @author pancm
+* @author xieli
 * @date 2018年5月29日
  */
 @Configuration
 @EnableSwagger2
-public class Swagger {
-
+public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.pancm"))
+                .apis(RequestHandlerSelectors.basePackage("com.example"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Spring Boot中使用Swagger2构建RESTful APIs")
-                .description("测试")
-                .termsOfServiceUrl("http://www.panchengming.com/")
-                .contact("xuwujing")
+                .title("springboot利用swagger构建api文档")
+                .description("简单优雅的restfun风格，http://blog.csdn.net/saytime")
+                .termsOfServiceUrl("http://blog.csdn.net/saytime")
                 .version("1.0")
                 .build();
     }
-
 }

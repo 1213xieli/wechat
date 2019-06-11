@@ -5,6 +5,8 @@ import com.example.wechat.entity.CheckinDataInfo;
 import com.example.wechat.entity.UserInfo;
 import com.example.wechat.service.IDataService;
 import com.example.wechat.util.WechatUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.util.List;
  * @Date: 2019/4/30 10:04
  * @Description:
  */
+@Api(description = "微信接口")
 @RestController
 @RequestMapping("/wechat")
 public class WeChatController {
@@ -50,6 +53,7 @@ public class WeChatController {
         }
     }
 
+    @ApiOperation(value = "测试value" ,  notes="测试note")
     @GetMapping("/hello")
     public String getTest() {
         return "helloWorld";
