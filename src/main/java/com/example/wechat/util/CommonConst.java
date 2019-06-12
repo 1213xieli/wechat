@@ -28,5 +28,6 @@ public class CommonConst {
     public static final String Temp_Pic_Path = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" +
             File.separator + "resources" + File.separator + "static" + File.separator + "picture"+ File.separator;
 
+    public static final String defaultuserid= "xieli999";
 
 }

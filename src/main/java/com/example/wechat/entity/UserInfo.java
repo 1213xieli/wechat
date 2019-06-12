@@ -1,5 +1,7 @@
 package com.example.wechat.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -7,33 +9,16 @@ import java.io.Serializable;
  * time:2019/6/4
  * author:xieli
  */
+@Data
 public class UserInfo implements Serializable {
+
 
     private String userid;
     private String name;
     private String[] department;
+    private String usershowname;
+    private String company;
+    private String extendone;
 
-    public String getUserid() {
-        return userid;
-    }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String[] getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String[] department) {
-        this.department = department;
-    }
 }

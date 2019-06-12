@@ -3,15 +3,14 @@ package com.example.wechat.service.impl;
 import com.example.wechat.config.MyX509TrustManager;
 import com.example.wechat.entity.AccessTokenInfo;
 import com.example.wechat.entity.CheckinDataInfo;
+import com.example.wechat.entity.EventInfo;
 import com.example.wechat.entity.UserInfo;
 import com.example.wechat.service.IDataService;
-import com.example.wechat.util.CommonConst;
-import com.example.wechat.util.Func;
-import com.example.wechat.util.HttpsUtils;
-import com.example.wechat.util.WechatUtil;
+import com.example.wechat.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -21,9 +20,7 @@ import javax.net.ssl.TrustManager;
 import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * DataServiceImpl
@@ -64,20 +61,11 @@ public class DataServiceImpl implements IDataService {
 
         JSONObject output = new JSONObject();
         output.put("opencheckindatatype", 3);
-        // DateUtil.convertStartTime(starttime)
-        // DateUtil.convertEndTime(endtime)
-        output.put("starttime", 1559320721);
-        output.put("endtime", 1559666321);
+        output.put("starttime", DateUtil.convertStartTime(starttime));
+        output.put("endtime", DateUtil.convertEndTime(endtime));
         JSONArray arr = new JSONArray();
         arr.addAll(useridlist);
         output.put("useridlist", arr);
-
-
-//        Map<String, Object> map = new HashMap<>();
-//        map.put("opencheckindatatype", 3);
-//        map.put("starttime", DateUtil.convertStartTime(starttime));
-//        map.put("endtime", DateUtil.convertEndTime(endtime));
-//        map.put("useridlist", useridlist);
 
 
         String requestUrl = CommonConst.CHECKINOPTION_URL.replace("ACCESS_TOKEN", tokenInfo.getAccess_token());
@@ -169,5 +157,90 @@ public class DataServiceImpl implements IDataService {
         return fileName;
     }
 
+    @Override
+    public Map<String, Object> initData() throws Exception {
+        List<UserInfo> userlist = getUserInfoList();
+        if (userlist == null || userlist.size() <= 0)
+            return null;
+
+
+        UserInfo defaultUser = new UserInfo();
+        Map<String, List<UserInfo>> map = new HashedMap();
+        for (UserInfo info : userlist) {
+            if (Func.checkNull(info.getUserid()) || !checkUserName(info.getName()))
+                continue;
+
+            // 中英文转化 用户命名
+            String userAllName = info.getName().replace("（","(").replace("）", ")");
+            String company = userAllName.substring(userAllName.indexOf("(") + 1, userAllName.indexOf(")"));
+            String username = userAllName.substring(0, userAllName.indexOf("("));
+
+            info.setUsershowname(username);
+            info.setCompany(company);
+
+            if (info.getUserid().equals(CommonConst.defaultuserid))
+                defaultUser = info;
+
+            if (map.containsKey(company))
+            {
+                map.get(company).add(info);
+            }
+            else 
+            {
+                List<UserInfo> list = new ArrayList<>();
+                list.add(info);
+                map.put(company, list);
+            }
+        }
+
+        List useridlist = new ArrayList();
+        useridlist.add(defaultUser.getUserid());
+
+        String startTime = DateUtil.getMonthStart() + " 00:00:00";
+        String endTime = DateUtil.getMonthEnd() + " 23:59:59";
+
+        long starlong = DateUtil.stringToLong(startTime, DateUtil.Formate_Second);
+        long endlong = DateUtil.stringToLong(endTime, DateUtil.Formate_Second);
+
+        List<CheckinDataInfo> checkinList = this.getCheckinDataInfoList(starlong, endlong, useridlist);
+        List<EventInfo> eventList = new ArrayList<>();
+        EventInfo eventInfo = new EventInfo();
+        for (CheckinDataInfo info : checkinList)
+        {
+            eventInfo = new EventInfo();
+            String checkTime = DateUtil.longToString(Func.parseLong(info.getCheckin_time()), DateUtil.Formate_HMS);
+            eventInfo.setTitle(info.getCheckin_type() + ":" + checkTime);
+            eventInfo.setStart(info.getCheckin_time());
+            eventList.add(eventInfo);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("defaultUser", defaultUser);
+        result.put("eventList", eventList);
+        result.put("companyList", map);
+
+        return result;
+    }
+
+    /* *
+     * @description 检查用户名： 谢李（南谷外包）
+     * @author xieli
+     * @date  9:14 2019/6/12
+     * @param [username]
+     * @return boolean
+     **/
+    private boolean checkUserName(String username) throws Exception
+    {
+        if (Func.checkNull(username))
+            return false;
+
+        if (username.contains("(") && username.contains(")"))
+            return true;
+
+        if (username.contains("（") && username.contains("（"))
+            return true;
+
+        return false;
+    }
 
 }

@@ -11,6 +11,7 @@ import java.io.Serializable;
 @lombok.Data
 public class CheckinDataInfo implements Serializable {
 
+    private String id;
     private String userid; // "xieli999",
     private String groupname;// "外包人员打卡",
     private String checkin_type;// "上班打卡",
@@ -22,5 +23,6 @@ public class CheckinDataInfo implements Serializable {
     private String notes;
     private String wifimac;
     private String[]  mediaids;
+    private String extendone;
 
 }

@@ -2,6 +2,7 @@ package com.example.wechat.controller;
 
 import com.example.wechat.entity.AccessTokenInfo;
 import com.example.wechat.entity.CheckinDataInfo;
+import com.example.wechat.entity.ResponseEntity;
 import com.example.wechat.entity.UserInfo;
 import com.example.wechat.service.IDataService;
 import com.example.wechat.util.WechatUtil;
@@ -15,13 +16,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: xieli
  * @Date: 2019/4/30 10:04
  * @Description:
  */
-@Api(description = "微信接口")
+@Api(description = "微信打卡接口")
 @RestController
 @RequestMapping("/wechat")
 public class WeChatController {
@@ -59,6 +61,22 @@ public class WeChatController {
         return "helloWorld";
     }
 
+    @ApiOperation(value = "初始化数据" ,  notes="初始化数据")
+    @GetMapping("/initData")
+    public ResponseEntity<?> initData() {
+        try {
+            Map<String, Object> datamap = dataService.initData();
+            return ResponseEntity.buildSuccess(datamap);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.buildSuccess(null);
+    }
+
+    @ApiOperation(value = "getData" ,  notes="getData")
     @GetMapping("/getData")
     public String getData() {
         try {

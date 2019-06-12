@@ -4,6 +4,7 @@ import com.example.wechat.entity.CheckinDataInfo;
 import com.example.wechat.entity.UserInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * IDataService 数据业务层Service
@@ -38,4 +39,13 @@ public interface IDataService {
      * @return java.lang.String
      **/
     String getmedia(String media_id)  throws Exception;
+
+    /* *
+     * @description 初始化数据
+     * @author xieli
+     * @date  8:54 2019/6/12
+     * @param []
+     * @return java.lang.String
+     **/
+    Map initData()throws Exception;
 }
