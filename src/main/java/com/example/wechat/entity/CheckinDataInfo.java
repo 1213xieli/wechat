@@ -16,7 +16,7 @@ public class CheckinDataInfo implements Serializable {
     private String groupname;// "外包人员打卡",
     private String checkin_type;// "上班打卡",
     private String exception_type;
-    private String checkin_time;// 1559350314,
+    private String checkin_time;// 1559350314,Unix时间戳
     private String location_title;// "正邦集团",
     private String location_detail;// "江西省南昌市青山湖区艾溪湖一路569号",
     private String wifiname;
