@@ -14,6 +14,7 @@
   <script src='../fullcalendar/daygrid/main.js'></script>
   <script src='../fullcalendar/timegrid/main.js'></script>
   <script src="../layui/layui.js"></script>
+  <script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
   <style>
     .page-title {
       text-align: center;
@@ -45,31 +46,21 @@
 
 
 <h3 class="page-title">外包考勤</h3>
-<form class="layui-form" action="" lay-filter="example">
+<form class="layui-form" action="" lay-filter="searchForm">
   <div class="layui-form-item">
     <div class="layui-inline">
       <label class="layui-form-label">外包公司</label>
       <div class="layui-input-inline">
-        <select name="interest" lay-filter="aihao">
+        <select lay-filter="companyList" class="companyList" name="companyList">
           <option value=""></option>
-          <option value="0">写作</option>
-          <option value="1" selected="">阅读</option>
-          <option value="2">游戏</option>
-          <option value="3">音乐</option>
-          <option value="4">旅行</option>
         </select>
       </div>
     </div>
     <div class="layui-inline">
       <label class="layui-form-label">外包人员</label>
       <div class="layui-input-inline">
-        <select name="interest" lay-filter="aihao">
+        <select lay-filter="personList" class="personList" name="personList">
           <option value=""></option>
-          <option value="0">写作</option>
-          <option value="1" selected="">阅读</option>
-          <option value="2">游戏</option>
-          <option value="3">音乐</option>
-          <option value="4">旅行</option>
         </select>
       </div>
     </div>
@@ -77,16 +68,9 @@
   
   <div class="layui-form-item">
     <div class="layui-inline">
-      <label class="layui-form-label">考勤月份</label>
-      <div class="layui-input-inline">
-        <input type="text" class="layui-input" id="test3" placeholder="yyyy-MM">
-      </div>
-    </div>
-    <div class="layui-inline">
       <label class="layui-form-label"></label>
       <div class="layui-input-inline">
-        <button class="layui-btn" lay-submit="" lay-filter="demo1">查询</button>
-        <button type="reset" class="layui-btn layui-btn-primary">导出</button>
+        <button class="layui-btn" lay-submit="" lay-filter="searchSubmit">查询</button>
       </div>
     </div>
   </div>
@@ -96,39 +80,69 @@
 <div id="calendar"></div>
 </body>
 <script>
+    function initData() {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                type: "GET",
+                url: "http://192.168.91.58:8080/wechat/initData",
+                dataType: "json",
+                success: function (res) {
+                    resolve(res.data);
+                }
+            });
+        });
+    }
+    
     layui.use(['form', 'layedit', 'laydate'], function () {
         var form = layui.form,
             layer = layui.layer,
             layedit = layui.layedit,
             laydate = layui.laydate;
 
-        //年月选择器
-        laydate.render({
-            elem: '#test3',
-            type: 'month'
-        });
-
-        //监听提交
-        form.on('submit(demo1)', function (data) {
-            return false;
-        });
-
         //表单初始赋值
-        form.val('example', {
-            "username": "贤心" // "name": "value"
-            ,
-            "password": "123456",
-            "interest": 1,
-            "like[write]": true //复选框选中状态
-            ,
-            "close": true //开关状态
-            ,
-            "sex": "女",
-            "desc": "我爱 layui"
+        initData().then(function (data) {
+            let companyList = data.companyList;
+            let {company, userid, name} = data.defaultUser;
+            
+            // 初始化数据
+            for (var key in companyList) {
+                $('.companyList').append('<option value='+key+'>'+key+'</option>');
+            }
+            
+            $('.companyList').val(company);
+            
+            let personList = companyList[company];
+            personList.forEach(function (item, index) {
+                $('.personList').append('<option value='+item.userid+'>'+item.usershowname+'</option>');
+            });
+
+            $('.personList').val(userid);
+
+            form.render();
+            
+            // 监听选择外包公司，更新人员列表
+            form.on('select(companyList)', function(data){
+                let personList = companyList[data.value];
+
+                $('.personList').empty();
+                
+                personList.forEach(function (item, index) {
+                    $('.personList').append('<option value='+item.userid+'>'+item.usershowname+'</option>');
+                });
+                
+                form.render();
+            });
+            
+
+            //监听提交
+            form.on('submit(searchSubmit)', function (data) {
+                return false;
+            });
+
         });
     });
-
-
+    
+    
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -159,40 +173,48 @@
                     });
 
                     layer.close(index);
-                    calendar.unselect();
                 });
             },
             unselectAuto: true,
             editable: true,
             eventLimit: true,
             dateClick: function () {
-            
+
             },
             eventClick: function () {
-                console.log(arguments);
+            
             },
             events: function (date, wrappedSuccess, wrappedFailure) {//ajax请求数据并显示在响应时间段内
-                console.log(arguments);
-                let needList = [
-                    {
-                        title: 'All Day Event',
-                        start: '2019-06-01',
-                        editable: true
-                    }, {
-                        title: 'Long Event',
-                        start: '2019-06-07',
-                        end: '2019-06-10'
-                    }];
+                // let needList = [
+                //     {
+                //         title: 'All Day Event',
+                //         start: '2019-06-01',
+                //         editable: true
+                //     }, {
+                //         title: 'Long Event',
+                //         start: '2019-06-07',
+                //         end: '2019-06-10'
+                //     }];
 
-                setTimeout(() => {
-                    wrappedSuccess(needList)
-                }, 3000);
-
+                initData().then(function (data){
+                    let eventList = data.eventList.map(function (item, index) {
+                        let newObj = {};
+                        for (var key in item) {
+                            if (item[key] && item[key] !== null && item[key] !== undefined) {
+                                newObj[key] = item[key];
+                            }
+                        }
+                        return newObj;
+                    });
+                    
+                    wrappedSuccess(eventList);
+                });
             },
         });
 
         calendar.render();
     });
+  
 
 </script>
 
