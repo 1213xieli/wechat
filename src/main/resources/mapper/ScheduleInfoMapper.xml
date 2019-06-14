@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.wechat.dao.ScheduleInfoDao">
+	<resultMap id="BaseResultMap" type="com.example.wechat.entity.ScheduleInfo">
+		<result column="id" property="id" />
+		<result column="handerid" property="handerid" />
+		<result column="handername" property="handername" />
+		<result column="title" property="title" />
+		<result column="type" property="type" />
+		<result column="editable" property="editable" />
+		<result column="starttime" property="starttime" />
+		<result column="endtime" property="endtime" />
+		<result column="createtime" property="createtime" />
+		<result column="createuserid" property="createuserid" />
+		<result column="extendone" property="extendone" />
+	</resultMap>
+
+	<parameterMap id="ScheduleInfo" type="com.example.wechat.entity.ScheduleInfo" />
+
+	<sql id="Base_Column_List">
+		id, handerid,handername,title,type,editable,starttime,endtime,createtime,createuserid,extendone
+	</sql>
+
+
+	<select id="findByEntity" resultMap="BaseResultMap" parameterType="ScheduleInfo">
+		select
+		<include refid="Base_Column_List" />
+		from t_schedule
+		<where>
+			<if test="id!=null and id!=''">
+				and id = #{id}
+			</if>
+			<if test="handername!=null and handername!=''">
+				and handername = #{handername}
+			</if>
+			<if test="handerid!=null and handerid!=''">
+				and handerid = #{handerid}
+			</if>
+		</where>
+	</select>
+
+
+
+
+	<insert id="insert" parameterMap="ScheduleInfo" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		t_schedule(
+		<include refid="Base_Column_List" />
+	   	)
+		values
+		(#{id},#{handerid},#{handername},#{title},#{type},#{editable},#{starttime},#{endtime},#{createtime},#{createuserid},#{extendone})
+	</insert>
+
+
+
+	<update id="update" parameterMap="ScheduleInfo">
+		update
+		t_schedule
+		<trim prefix="set" suffixOverrides=",">
+			<if test="starttime!=null">
+				starttime = #{starttime},
+			</if>
+			<if test="title!=null">
+				title = #{title},
+			</if>
+		</trim>
+		where
+		id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="java.lang.String">
+		delete from
+		t_schedule
+		where
+		id =
+		#{id}
+	</delete>
+
+
+</mapper>

@@ -76,6 +76,22 @@ public class WeChatController {
         return ResponseEntity.buildSuccess(null);
     }
 
+    @ApiOperation(value = "筛选条件查询数据" ,  notes="筛选条件查询数据")
+    @GetMapping("/queryData")
+    public ResponseEntity<?> queryData(@RequestParam("userid") String userid, @RequestParam("month") String month) {
+        try {
+            Map<String, Object> datamap = dataService.queryData(userid, month);
+            return ResponseEntity.buildSuccess(datamap);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.buildSuccess(null);
+    }
+
+
     @ApiOperation(value = "getData" ,  notes="getData")
     @GetMapping("/getData")
     public String getData() {

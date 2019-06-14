@@ -458,6 +458,24 @@ public class DateUtil
         return parseDate(dateStr, Formate_Second).getTime();
     }
 
+    /**
+     * 时间戳转Unix时间戳
+     * @param timestamp
+     * @return
+     */
+    public static long toUnixTimeStamp(long timestamp){
+        return timestamp/1000;
+    }
+
+    /**
+     * Unix时间戳转时间戳
+     * @param unixTimeStamp
+     * @return
+     */
+    public static long toTimestamp(long unixTimeStamp){
+        return unixTimeStamp*1000;
+    }
+
     /* *
      * @description 转化成结束时间
      * @author xieli
@@ -476,9 +494,12 @@ public class DateUtil
      * 获取本月最后一天
      * @return String
      * **/
-    public static String getMonthEnd() {
+    public static String getMonthEnd(int... month) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        if (month.length == 1 && month[0] != 0)
+            cal.set(Calendar.MONTH, month[0] - 1);
+
         Date time = cal.getTime();
         return new SimpleDateFormat(Formate_Day).format(time);
     }
@@ -486,10 +507,13 @@ public class DateUtil
      * 获取本月开始日期
      * @return String
      * **/
-    public static String getMonthStart() {
+    public static String getMonthStart(int... month) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, 0);
         cal.set(Calendar.DAY_OF_MONTH, 1);
+        if (month.length == 1 && month[0] != 0)
+            cal.set(Calendar.MONTH, month[0] - 1);
+
         Date time = cal.getTime();
         return new SimpleDateFormat(Formate_Day).format(time);
     }
@@ -506,7 +530,7 @@ public class DateUtil
     // formatType要转换的string类型的时间格式
     public static String longToString(long currentTime, String formatType)
             throws ParseException {
-        Date date = longToDate(currentTime, formatType); // long类型转成Date类型
+        Date date = new Date(currentTime); // long类型转成Date类型
         String strTime = dateToString(date, formatType); // date类型转成String
         return strTime;
     }

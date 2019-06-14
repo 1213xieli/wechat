@@ -15,7 +15,7 @@ public class EventInfo {
     private String start;//	事件开始日期/时间，必选。格式为ISO8601字符串或UNIX时间戳
     private String end;//	事件结束日期/时间，可选。格式为ISO8601字符串或UNIX时间戳
     private String url;//	事件链接地址，字符串，可选。 当单击事件的时候会跳转到对应的url。
-    private String className;//	string 或者 Array 类型，可选。 一个css类（或者一组），附加到事件的 DOM 元素上。
+    private String string;//	string 或者 Array 类型，可选。 一个css类（或者一组），附加到事件的 DOM 元素上。
     private String editable;//	true或false，可选。只针对当前的单个事件，其他事件不受影响。
     private String startEditable;//	true或false，可选。覆盖当前事件的eventStartEditable选项
     private String durationEditable;//	true或false，可选。覆盖当前事件的eventDurationEditable选项

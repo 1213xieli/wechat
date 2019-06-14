@@ -48,4 +48,13 @@ public interface IDataService {
      * @return java.lang.String
      **/
     Map initData()throws Exception;
+
+    /* *
+     * @description 筛选条件查询数据
+     * @author xieli
+     * @date  17:01 2019/6/13
+     * @param [userid, month]
+     * @return java.util.Map
+     **/
+    Map queryData(String userid, String month) throws Exception;
 }
