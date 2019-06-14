@@ -209,7 +209,6 @@
                             month: month
                         },
                         success: function (res) {
-                            isRefresh = true;
                             eventList = res.data.eventList;
                             calendar.refetchEvents();
                         }
