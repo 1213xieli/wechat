@@ -39,6 +39,7 @@
     #calendar {
       max-width: 900px;
       margin: 0 auto;
+      margin-top: 60px;
     }
   </style>
 </head>
@@ -62,15 +63,6 @@
         <select class="personList" lay-filter="personList" name="personList">
           <option value=""></option>
         </select>
-      </div>
-    </div>
-  </div>
-  
-  <div class="layui-form-item">
-    <div class="layui-inline">
-      <label class="layui-form-label"></label>
-      <div class="layui-input-inline">
-        <button class="layui-btn search-form">查询</button>
       </div>
     </div>
   </div>
@@ -101,7 +93,7 @@
             header: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'month,agendaWeek,agendaDay'
+                right: 'month,agendaWeek,agendaDay',
             },
             locale: 'zh-cn',
             firstDay: 1,
@@ -135,71 +127,9 @@
 
             },
             events: function (date, wrappedSuccess, wrappedFailure) {//ajax请求数据并显示在响应时间段内
-                // let needList = [
-                //     {
-                //         title: 'All Day Event',
-                //         start: '2019-06-01',
-                //         editable: true
-                //     }, {
-                //         title: 'Long Event',
-                //         start: '2019-06-07',
-                //         end: '2019-06-10'
-                //     }];
-
-                wrappedSuccess(eventList);
-
-            },
-        });
-
-        calendar.render();
-        
-        layui.use(['form', 'layedit', 'laydate'], function () {
-            var form = layui.form,
-                layer = layui.layer,
-                layedit = layui.layedit,
-                laydate = layui.laydate;
-
-            //表单初始赋值
-            initData().then(function (data) {
-                let companyList = data.companyList;
-                let {company, userid, name} = data.defaultUser;
-                eventList = data.eventList;
-                calendar.refetchEvents();
-
-                // 初始化搜索表单数据
-                for (var key in companyList) {
-                    $('.companyList').append('<option value=' + key + '>' + key + '</option>');
-                }
-
-                $('.companyList').val(company);
-
-                let personList = companyList[company];
-                personList.forEach(function (item, index) {
-                    $('.personList').append('<option value=' + item.userid + '>' + item.usershowname + '</option>');
-                });
-
-                $('.personList').val(userid);
-
-                form.render();
-
-                // 监听选择外包公司，更新人员列表
-                form.on('select(companyList)', function (data) {
-                    let personList = companyList[data.value];
-
-                    $('.personList').empty();
-
-                    personList.forEach(function (item, index) {
-                        $('.personList').append('<option value=' + item.userid + '>' + item.usershowname + '</option>');
-                    });
-
-                    form.render();
-                });
-
-                //监听提交
-                $('.search-form').click(function (e) {
-                    e.preventDefault();
-                    let userid = $('.personList').val();
-                    let month = calendar.state.currentDate.getMonth() + 1;
+                let userid = $('.personList').val();
+                let month = date.end.getMonth();
+                if (userid) {
                     $.ajax({
                         type: "GET",
                         url: `http://192.168.91.58:8080/wechat/queryData`,
@@ -209,26 +139,74 @@
                             month: month
                         },
                         success: function (res) {
-                            eventList = res.data.eventList;
-                            calendar.refetchEvents();
+                            wrappedSuccess(res.data.eventList);
                         }
                     });
+                } else { //页面初始渲染
+                    wrappedSuccess(eventList);
+                }
+
+            },
+        });
+
+        calendar.render();
+
+        layui.use(['form', 'layedit', 'laydate'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+
+            //表单初始赋值
+            initData().then(function (data) {
+                let companyList = data.companyList;
+                let $companyList = $('.companyList');
+                let $personList = $('.personList');
+                let {company, userid, name} = data.defaultUser; //页面初始化默认值
+                eventList = data.eventList;
+                calendar.refetchEvents();
+
+                // 初始化搜索表单数据
+                for (var key in companyList) {
+                    $companyList.append('<option value=' + key + '>' + key + '</option>');
+                }
+
+                $companyList.val(company);
+
+                let personList = companyList[company];
+                personList.forEach(function (item, index) {
+                    $personList.append('<option value=' + item.userid + '>' + item.usershowname + '</option>');
                 });
+
+                $personList.val(userid);
+
+                form.render();
+
+                // 监听选择外包公司，更新人员列表
+                form.on('select(companyList)', function (data) {
+                    let personList = companyList[data.value];
+
+                    $personList.empty();
+
+                    personList.forEach(function (item, index) {
+                        $personList.append('<option value=' + item.userid + '>' + item.usershowname + '</option>');
+                    });
+
+                    form.render();
+
+                    calendar.refetchEvents();
+                });
+
+
+                // 监听人员
+                form.on('select(personList)', function (data) {
+                    calendar.refetchEvents();
+                });
+
 
             });
         });
     });
-
-    $(function () {
-    	$.ajax({
-    		type: "GET",
-    		url: "http://192.168.91.58:8080/wechat/initData",
-    		dataType: "json",
-    		success: function (data) {
-    			alert(data);
-    		}
-    	});
-    })
 </script>
 
 </html>
