@@ -195,11 +195,39 @@ public class DataServiceImpl implements IDataService {
         List<CheckinDataInfo> checkinList = this.getCheckinDataInfoList(starlong, endlong, useridlist);
         List<EventInfo> eventList = new ArrayList<>();
         EventInfo eventInfo = new EventInfo();
+
         for (CheckinDataInfo info : checkinList)
         {
             eventInfo = new EventInfo();
             String checkTime = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_HMS);
             String checkDay = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_Day);
+
+            // 未打卡
+            if (!Func.checkNullOrEmpty(info.getException_type()))
+            {
+                eventInfo.setTitle(info.getCheckin_type() +":"+ info.getException_type());
+                eventInfo.setStart(checkDay);
+                eventInfo.setColor("red");
+                eventList.add(eventInfo);
+                continue;
+            }
+
+
+            if (CommonConst.WorkTypeEnum.上班打卡.toString().equals(info.getCheckin_type()))
+            {
+                if (Func.parseDbl(checkTime) > Func.parseDbl(CommonConst.StartWork_Time))
+                {
+                    eventInfo.setColor("red");
+                }
+            }
+            else if (CommonConst.WorkTypeEnum.下班打卡.toString().equals(info.getCheckin_type()))
+            {
+                if (Func.parseDbl(checkTime) < Func.parseDbl(CommonConst.EndWork_Time))
+                {
+                    eventInfo.setColor("red");
+                }
+            }
+
             eventInfo.setTitle(info.getCheckin_type() + " '" + checkTime +"'");
             eventInfo.setStart(checkDay);
             eventList.add(eventInfo);
