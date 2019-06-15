@@ -1,9 +1,7 @@
 package com.example.wechat.controller;
 
 import com.example.wechat.entity.AccessTokenInfo;
-import com.example.wechat.entity.CheckinDataInfo;
 import com.example.wechat.entity.ResponseEntity;
-import com.example.wechat.entity.UserInfo;
 import com.example.wechat.service.IDataService;
 import com.example.wechat.util.WechatUtil;
 import io.swagger.annotations.Api;
@@ -13,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -96,24 +92,25 @@ public class WeChatController {
     @GetMapping("/getData")
     public String getData() {
         try {
-            List<UserInfo> list = dataService.getUserInfoList();
-            UserInfo xileiInfo = new UserInfo();
-            for (UserInfo user: list ) {
-                System.out.println(user.getName());
-                if (user.getUserid().equals("xieli999"))
-                    xileiInfo = user;
-            }
+//            List<UserInfo> list = dataService.getUserInfoList();
+//            UserInfo xileiInfo = new UserInfo();
+//            for (UserInfo user: list ) {
+//                System.out.println(user.getName());
+//                if (user.getUserid().equals("xieli999"))
+//                    xileiInfo = user;
+//            }
+//
+//            List username = new ArrayList();
+//            username.add("xieli999");
+//            username.add("xieli");
+//
+//            // WWCISP_TGB90yEQE02DFmVnlPeVJewD5C2eInvR9-cxL7rUHvzhj9YpiXUiHrv00euhky-B_6gvf9mG_MU-t_3eILBGhw
+//            List<CheckinDataInfo> checkDataList = dataService.getCheckinDataInfoList(1559320721, 1559666321, username);
+//            for (CheckinDataInfo info: checkDataList) {
+//                System.out.println(info.getMediaids());
+//            }
 
-            List username = new ArrayList();
-            username.add("xieli999");
-            username.add("xieli");
-
-            List<CheckinDataInfo> checkDataList = dataService.getCheckinDataInfoList(1559320721, 1559666321, username);
-            for (CheckinDataInfo info: checkDataList) {
-                System.out.println(info.getMediaids());
-            }
-
-            String str = dataService.getmedia(checkDataList.get(0).getMediaids()[0]);
+            String str = dataService.getmedia("WWCISP_TGB90yEQE02DFmVnlPeVJewD5C2eInvR9-cxL7rUHvzhj9YpiXUiHrv00euhky-B_6gvf9mG_MU-t_3eILBGhw");
         } catch (Exception e) {
             e.printStackTrace();
         }

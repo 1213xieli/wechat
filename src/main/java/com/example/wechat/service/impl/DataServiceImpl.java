@@ -109,6 +109,7 @@ public class DataServiceImpl implements IDataService {
             conn.setSSLSocketFactory(ssf);
             conn.setRequestMethod("GET");
             conn.connect();
+
             BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
             String file_name =".jpg";
             Date d = new Date();
@@ -183,6 +184,10 @@ public class DataServiceImpl implements IDataService {
         if (Func.checkNullOrEmpty(userid))
             throw new Exception("未传入用户id");
 
+        AccessTokenInfo tokenInfo = WechatUtil.getAccessToken();
+        if (tokenInfo == null || Func.checkNull(tokenInfo.getAccess_token()))
+            throw new Exception("无数据");
+
         List useridlist = new ArrayList();
         useridlist.add(userid);
 
@@ -199,41 +204,72 @@ public class DataServiceImpl implements IDataService {
         for (CheckinDataInfo info : checkinList)
         {
             eventInfo = new EventInfo();
-            String checkTime = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_HMS);
+            String showCheckInTime = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_HMS);
             String checkDay = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_Day);
+            String checkTime =  DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_HM);
+            eventInfo.setStart(checkDay);
 
-            // 未打卡
+            // 时间异常则标红背景
             if (!Func.checkNullOrEmpty(info.getException_type()))
             {
+                eventInfo.setBackgroundColor("red");
+                eventInfo.setBorderColor("red");
+            }
+
+            // 未打卡
+            if (!Func.checkNullOrEmpty(info.getException_type()) && info.getException_type().equals(CommonConst.Exception_Type))
+            {
                 eventInfo.setTitle(info.getCheckin_type() +":"+ info.getException_type());
-                eventInfo.setStart(checkDay);
-                eventInfo.setColor("red");
                 eventList.add(eventInfo);
                 continue;
             }
 
+//            if (!checkTime(info, checkTime, eventInfo))
+//            {
+//                eventInfo.setBackgroundColor("red");
+//                eventInfo.setBorderColor("red");
+//            }
 
-            if (CommonConst.WorkTypeEnum.上班打卡.toString().equals(info.getCheckin_type()))
+            eventInfo.setTitle(info.getCheckin_type() + " '" + showCheckInTime +"'");
+
+            if (Func.checkNullOrEmpty(info.getException_type()) && info.getMediaids() != null && info.getMediaids().length >= 1 && !Func.checkNullOrEmpty(info.getMediaids()[0]))
             {
-                if (Func.parseDbl(checkTime) > Func.parseDbl(CommonConst.StartWork_Time))
-                {
-                    eventInfo.setColor("red");
-                }
-            }
-            else if (CommonConst.WorkTypeEnum.下班打卡.toString().equals(info.getCheckin_type()))
-            {
-                if (Func.parseDbl(checkTime) < Func.parseDbl(CommonConst.EndWork_Time))
-                {
-                    eventInfo.setColor("red");
-                }
+                String requestUrl = CommonConst.MEDIA_URL.replace("ACCESS_TOKEN", tokenInfo.getAccess_token()).replace("MEDIA_ID", info.getMediaids()[0]);
+                eventInfo.setUrl(requestUrl);
             }
 
-            eventInfo.setTitle(info.getCheckin_type() + " '" + checkTime +"'");
-            eventInfo.setStart(checkDay);
             eventList.add(eventInfo);
         }
         result.put("eventList", eventList);
     }
+
+    /* *
+     * @description 验证打卡时间
+     * @author xieli
+     * @date  15:57 2019/6/14
+     * @param [info, checkTime, eventInfo]
+     * @return boolean
+     **/
+    private boolean checkTime(CheckinDataInfo info, String checkTime, EventInfo eventInfo)
+    {
+        if (CommonConst.WorkTypeEnum.上班打卡.toString().equals(info.getCheckin_type()))
+        {
+            if (Func.parseDbl(checkTime) > Func.parseDbl(CommonConst.StartWork_Time))
+            {
+                return false;
+            }
+        }
+        else if (CommonConst.WorkTypeEnum.下班打卡.toString().equals(info.getCheckin_type()))
+        {
+            if (Func.parseDbl(checkTime) < Func.parseDbl(CommonConst.EndWork_Time))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     @Override
     public Map initData() throws Exception {

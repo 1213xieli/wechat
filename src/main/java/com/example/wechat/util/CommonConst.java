@@ -31,8 +31,8 @@ public class CommonConst {
     public static final String defaultuserid= "xieli999";
 
     public static final String Exception_Type="未打卡";
-    public static final long StartWork_Time = 1559350800; // 早上九点
-    public static final long EndWork_Time = 1559383200; // 晚上六点
+    public static final int StartWork_Time = 900; // 早上九点
+    public static final int EndWork_Time = 1800; // 晚上六点
 
     public enum WorkTypeEnum
     {

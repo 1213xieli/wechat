@@ -25,6 +25,7 @@ public class DateUtil
     public static String Formate_Day = "yyyy-MM-dd";
     public static String Formate_Second = "yyyy-MM-dd HH:mm:ss";
     public static String Formate_HMS = "HH:mm:ss";
+    public static String Formate_HM = "HHmm";
 
 
     public static String getCurrentYear()
