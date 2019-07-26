@@ -1,5 +1,8 @@
 package com.example.wechat.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.example.wechat.config.MyX509TrustManager;
 import com.example.wechat.entity.AccessTokenInfo;
 import com.example.wechat.entity.CheckinDataInfo;
@@ -7,9 +10,6 @@ import com.example.wechat.entity.EventInfo;
 import com.example.wechat.entity.UserInfo;
 import com.example.wechat.service.IDataService;
 import com.example.wechat.util.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Service;
 
@@ -38,16 +38,18 @@ public class DataServiceImpl implements IDataService {
 
         String requestUrl = CommonConst.SIMPLES_URL.replace("ACCESS_TOKEN", tokenInfo.getAccess_token())
                 .replace("DEPARTMENT_ID", CommonConst.DEPARTMENT_ID).replace("FETCH_CHILD", CommonConst.FETCH_CHILD);
-        JSONObject jsonObject = HttpsUtils.sendRequest(requestUrl, "GET", null);
-        String errcode = Func.parseStr(jsonObject.get("errcode"));
+        String jsonStr = HttpsUtils.sendRequest(requestUrl, "GET", null);
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String errcode = Func.parseStr(jsonObject.getString("errcode"));
         if (Func.checkNull(errcode) || !errcode.equals("0"))
             return new ArrayList<>();
 
-        JSONArray jsonArray = jsonObject.getJSONArray("userlist");
-        if (jsonArray == null || jsonArray.size() <= 0)
+        String userStr = jsonObject.getString("userlist");
+        List list = JSONArray.parseArray(userStr, UserInfo.class);
+        if (list == null || list.size() <= 0)
             return new ArrayList<>();
 
-        return JSONArray.toList(jsonArray, new UserInfo(), new JsonConfig());
+        return list;
     }
 
     @Override
@@ -72,16 +74,18 @@ public class DataServiceImpl implements IDataService {
 
 
         String requestUrl = CommonConst.CHECKINOPTION_URL.replace("ACCESS_TOKEN", tokenInfo.getAccess_token());
-        JSONObject jsonObject = HttpsUtils.sendRequest(requestUrl, "POST", output.toString());
-        String errcode = Func.parseStr(jsonObject.get("errcode"));
+        String jsonStr = HttpsUtils.sendRequest(requestUrl, "POST", output.toString());
+        JSONObject jsonObject = JSON.parseObject(jsonStr);
+        String errcode = jsonObject.getString("errcode");
         if (Func.checkNull(errcode) || !errcode.equals("0"))
             return new ArrayList<>();
 
-        JSONArray jsonArray = jsonObject.getJSONArray("checkindata");
-        if (jsonArray == null || jsonArray.size() <= 0)
+        String checkStr = jsonObject.getString("checkindata");
+        List list = JSONArray.parseArray(checkStr, CheckinDataInfo.class);
+        if (list == null || list.size() <= 0)
             return new ArrayList<>();
 
-        return JSONArray.toList(jsonArray, new CheckinDataInfo(), new JsonConfig());
+        return list;
     }
 
     /**
@@ -280,6 +284,7 @@ public class DataServiceImpl implements IDataService {
 
         UserInfo defaultUser = new UserInfo();
         Map<String, List<UserInfo>> map = new HashedMap();
+        int i = 1;
         for (UserInfo info : userlist) {
             if (Func.checkNull(info.getUserid()) || !checkUserName(info.getName()))
                 continue;
@@ -299,11 +304,12 @@ public class DataServiceImpl implements IDataService {
             {
                 map.get(company).add(info);
             }
-            else 
+            else
             {
                 List<UserInfo> list = new ArrayList<>();
                 list.add(info);
                 map.put(company, list);
+                System.out.println("外包公司：" + (i++) + company);
             }
         }
 

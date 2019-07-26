@@ -1,8 +1,8 @@
 package com.example.wechat.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.wechat.entity.AccessTokenInfo;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 import org.apache.commons.lang.RandomStringUtils;
 
 import java.security.NoSuchAlgorithmException;
@@ -25,12 +25,12 @@ public class WechatUtil {
     public static AccessTokenInfo getAccessToken() {
         AccessTokenInfo accessToken = null;
         String requestUrl = CommonConst.ACCESS_TOKEN_URL.replace("CORPID", CommonConst.CORPID).replace("CORPSECRET", CommonConst.CORPSECRET);
-        JSONObject jsonObject = HttpsUtils.sendRequest(requestUrl,"GET",null);
+        String jsonStr = HttpsUtils.sendRequest(requestUrl,"GET",null);
         // 如果请求成功
-        if (null != jsonObject) {
+        if (!Func.checkNullOrEmpty(jsonStr)) {
             try {
-                accessToken = (AccessTokenInfo) JSONObject.toBean(jsonObject, AccessTokenInfo.class);
-            } catch (JSONException e) {
+                accessToken = (AccessTokenInfo) JSON.parseObject(jsonStr, AccessTokenInfo.class);
+            } catch (Exception e) {
                 accessToken = null;
                 // 获取token失败 , jsonObject.getInt("errcode"), jsonObject.getString("errmsg")
                 System.out.println("获取token失败 errcode:{} errmsg:{}");
@@ -43,15 +43,17 @@ public class WechatUtil {
     public static String getAccessTicket(String accessToken) {
 
         String requestUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + accessToken + "&type=jsapi";
-        JSONObject jsonObject = HttpsUtils.sendRequest(requestUrl, "GET", null);
+        String jsonStr = HttpsUtils.sendRequest(requestUrl, "GET", null);
 
         String ticket = "";
         // 如果请求成功
-        if (null != jsonObject) {
+        if (!Func.checkNullOrEmpty(jsonStr)) {
             try {
-                ticket = jsonObject.getString("ticket").toString();
+                JSONObject jsonObject = JSON.parseObject(jsonStr);
+                ticket = jsonObject.getString("ticket");
+//                ticket = jsonStr.getString("ticket").toString();
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
 
                 // 获取token失败 , jsonObject.getInt("errcode"), jsonObject.getString("errmsg")
                 System.out.println("获取token失败 errcode:{} errmsg:{}");
