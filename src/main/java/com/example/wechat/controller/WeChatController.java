@@ -29,34 +29,6 @@ public class WeChatController {
 
     private String TOKEN = "good";
 
-
-    @GetMapping("/test")
-    public String test(@RequestParam("signature") String signature,
-                       @RequestParam("timestamp") String timestamp,
-                       @RequestParam("nonce") String nonce,
-                       @RequestParam("echostr") String echostr) {
-
-        //排序
-        String sortString = sort(TOKEN, timestamp, nonce);
-        //加密
-        String myString = sha1(sortString);
-        //校验
-        if (myString != null && myString != "" && myString.equals(signature)) {
-            System.out.println("签名校验通过");
-            //如果检验成功原样返回echostr，微信服务器接收到此输出，才会确认检验完成。
-            return echostr;
-        } else {
-            System.out.println("签名校验失败");
-            return "";
-        }
-    }
-
-    @ApiOperation(value = "测试value" ,  notes="测试note")
-    @GetMapping("/hello")
-    public String getTest() {
-        return "helloWorld";
-    }
-
     @ApiOperation(value = "初始化数据" ,  notes="初始化数据")
     @GetMapping("/initData")
     public ResponseEntity<?> initData() {
@@ -92,24 +64,6 @@ public class WeChatController {
     @GetMapping("/getData")
     public String getData() {
         try {
-//            List<UserInfo> list = dataService.getUserInfoList();
-//            UserInfo xileiInfo = new UserInfo();
-//            for (UserInfo user: list ) {
-//                System.out.println(user.getName());
-//                if (user.getUserid().equals("xieli999"))
-//                    xileiInfo = user;
-//            }
-//
-//            List username = new ArrayList();
-//            username.add("xieli999");
-//            username.add("xieli");
-//
-//            // WWCISP_TGB90yEQE02DFmVnlPeVJewD5C2eInvR9-cxL7rUHvzhj9YpiXUiHrv00euhky-B_6gvf9mG_MU-t_3eILBGhw
-//            List<CheckinDataInfo> checkDataList = dataService.getCheckinDataInfoList(1559320721, 1559666321, username);
-//            for (CheckinDataInfo info: checkDataList) {
-//                System.out.println(info.getMediaids());
-//            }
-
             String str = dataService.getmedia("WWCISP_TGB90yEQE02DFmVnlPeVJewD5C2eInvR9-cxL7rUHvzhj9YpiXUiHrv00euhky-B_6gvf9mG_MU-t_3eILBGhw");
         } catch (Exception e) {
             e.printStackTrace();

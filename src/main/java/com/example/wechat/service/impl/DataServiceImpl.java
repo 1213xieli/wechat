@@ -101,7 +101,6 @@ public class DataServiceImpl implements IDataService {
         String fileName = "";
         try {
             String requestUrl = CommonConst.MEDIA_URL.replace("ACCESS_TOKEN", tokenInfo.getAccess_token()).replace("MEDIA_ID", media_id);
-//            JSONObject tokenJson=HttpsUtils.sendRequest(requestUrl, "POST",null);
 
             URL url = new URL(requestUrl);
             TrustManager[] tm = { new MyX509TrustManager() };
