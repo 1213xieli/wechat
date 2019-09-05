@@ -290,8 +290,13 @@ public class DataServiceImpl implements IDataService {
 
             // 中英文转化 用户命名
             String userAllName = info.getName().replace("（","(").replace("）", ")");
-            String company = userAllName.substring(userAllName.indexOf("(") + 1, userAllName.indexOf(")"));
-            String username = userAllName.substring(0, userAllName.indexOf("("));
+            String company = CommonConst.Other_Company;
+            String username = userAllName;
+            if (userAllName.contains("("))
+            {
+                company = userAllName.substring(userAllName.indexOf("(") + 1, userAllName.indexOf(")"));
+                username = userAllName.substring(0, userAllName.indexOf("("));
+            }
 
             info.setUsershowname(username);
             info.setCompany(company);
@@ -308,31 +313,9 @@ public class DataServiceImpl implements IDataService {
                 List<UserInfo> list = new ArrayList<>();
                 list.add(info);
                 map.put(company, list);
-                System.out.println("外包公司：" + (i++) + company);
+//                System.out.println("外包公司：" + (i++) + company);
             }
         }
-
-//        List useridlist = new ArrayList();
-//        useridlist.add(defaultUser.getUserid());
-//
-//        String startTime = DateUtil.getMonthStart() + " 00:00:00";
-//        String endTime = DateUtil.getMonthEnd() + " 23:59:59";
-//
-//        long starlong = DateUtil.stringToLong(startTime, DateUtil.Formate_Second);
-//        long endlong = DateUtil.stringToLong(endTime, DateUtil.Formate_Second);
-//
-//        List<CheckinDataInfo> checkinList = this.getCheckinDataInfoList(starlong, endlong, useridlist);
-//        List<EventInfo> eventList = new ArrayList<>();
-//        EventInfo eventInfo = new EventInfo();
-//        for (CheckinDataInfo info : checkinList)
-//        {
-//            eventInfo = new EventInfo();
-//            String checkTime = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_HMS);
-//            String checkDay = DateUtil.longToString(DateUtil.toTimestamp(Func.parseLong(info.getCheckin_time())), DateUtil.Formate_Day);
-//            eventInfo.setTitle(info.getCheckin_type() + " '" + checkTime +"'");
-//            eventInfo.setStart(checkDay);
-//            eventList.add(eventInfo);
-//        }
 
         Map<String, Object> result = new HashMap<>();
         getEventList(defaultUser.getUserid(), null, result);
@@ -354,13 +337,15 @@ public class DataServiceImpl implements IDataService {
         if (Func.checkNull(username))
             return false;
 
-        if (username.contains("(") && username.contains(")"))
-            return true;
+//        if (username.contains("(") && username.contains(")"))
+//            return true;
+//
+//        if (username.contains("（") && username.contains("（"))
+//            return true;
 
-        if (username.contains("（") && username.contains("（"))
-            return true;
-
-        return false;
+        return true;
     }
+
+
 
 }
