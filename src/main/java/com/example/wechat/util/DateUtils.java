@@ -14,9 +14,8 @@ import java.util.regex.Pattern;
  * @author xieli
  * @date  9:51 2019/6/5
  **/
-public class DateUtil
-{
-    public DateUtil()
+public class DateUtils {
+    public DateUtils()
     {
 
     }
@@ -299,11 +298,11 @@ public class DateUtil
         return new SimpleDateFormat(formatStr).parse(dateStr);
     }
 
-    /** 
-     *  获取两个日期相差的月数 
+    /**
+     *  获取两个日期相差的月数
      * @param c1    较大的日期
      * @param c2    较小的日期
-     * @return  如果d1>d2返回 月数差 否则返回0 
+     * @return 如果d1>d2返回 月数差 否则返回0
      */
     public static int getMonthDiff(Calendar c1, Calendar c2)
     {
@@ -317,14 +316,14 @@ public class DateUtil
         int month2 = c2.get(Calendar.MONTH);
         int day1 = c1.get(Calendar.DAY_OF_MONTH);
         int day2 = c2.get(Calendar.DAY_OF_MONTH);
-        // 获取年的差值 假设 d1 = 2015-8-16  d2 = 2011-9-30  
+        // 获取年的差值 假设 d1 = 2015-8-16  d2 = 2011-9-30
         int yearInterval = year1 - year2;
-        // 如果 d1的 月-日 小于 d2的 月-日 那么 yearInterval-- 这样就得到了相差的年数  
+        // 如果 d1的 月-日 小于 d2的 月-日 那么 yearInterval-- 这样就得到了相差的年数
         if (month1 < month2 || month1 == month2 && day1 < day2)
         {
             yearInterval--;
         }
-        // 获取月数差值  
+        // 获取月数差值
         int monthInterval = (month1 + 12) - month2;
         if (day1 < day2)
         {
@@ -579,4 +578,76 @@ public class DateUtil
     public static long dateToLong(Date date) {
         return date.getTime();
     }
+
+
+    /**
+     * 获取某年某月的第一天
+     *
+     * @throws
+     * @Title:getFisrtDayOfMonth
+     * @Description:
+     * @param:@param year
+     * @param:@param month
+     * @param:@return
+     * @return:String
+     */
+    public static String getFisrtDayOfMonth(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        //设置年份
+        cal.set(Calendar.YEAR, year);
+        //设置月份
+        cal.set(Calendar.MONTH, month - 1);
+        //获取某月最小天数
+        int firstDay = cal.getActualMinimum(Calendar.DAY_OF_MONTH);
+        //设置日历中月份的最小天数
+        cal.set(Calendar.DAY_OF_MONTH, firstDay);
+        //格式化日期
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String firstDayOfMonth = sdf.format(cal.getTime()) + " 00:00:00";
+        return firstDayOfMonth;
+    }
+
+    /**
+     * 获取某月的最后一天
+     *
+     * @throws
+     * @Title:getLastDayOfMonth
+     * @Description:
+     * @param:@param year
+     * @param:@param month
+     * @param:@return
+     * @return:String
+     */
+    public static String getLastDayOfMonth(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        //设置年份
+        cal.set(Calendar.YEAR, year);
+        //设置月份
+        cal.set(Calendar.MONTH, month - 1);
+        //获取某月最大天数
+        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        //设置日历中月份的最大天数
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        //格式化日期
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String lastDayOfMonth = sdf.format(cal.getTime()) + " 23:59:59";
+        return lastDayOfMonth;
+    }
+
+    /**
+     * @throws
+     * @Title:main
+     * @Description:
+     * @param:@param args
+     * @return: void
+     */
+    public static void main(String[] args) {
+        String firstDay = getFisrtDayOfMonth(2019, 10);
+        System.out.println("脚本之家测试结果：");
+        System.out.println("获取当前月的第一天：" + firstDay);
+
+        String lastDay = getLastDayOfMonth(2019, 10);
+        System.out.println("获取当前月的最后一天：" + lastDay);
+    }
+
 }

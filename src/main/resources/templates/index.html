@@ -140,6 +140,7 @@
                 debugger
                 let userid = $('.personList').val();
                 let month = date.end.getMonth();
+              let year = date.end.getFullYear();
                 if (userid) {
 
                   var loading = layer.msg('正在加载', {icon: 16, shade: 0.3, time:0});
@@ -149,6 +150,7 @@
                         dataType: "json",
                         data: {
                             userid: userid,
+                          year: year,
                             month: month
                         },
                         success: function (res) {

@@ -56,5 +56,5 @@ public interface IDataService {
      * @param [userid, month]
      * @return java.util.Map
      **/
-    Map queryData(String userid, String month) throws Exception;
+    Map queryData(String userid, String year, String month) throws Exception;
 }
