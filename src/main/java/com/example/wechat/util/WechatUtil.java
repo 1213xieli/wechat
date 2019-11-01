@@ -73,12 +73,6 @@ public class WechatUtil {
         String shaStr = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + noncestr + "&timestamp=" + timestamp + "&url="
                 + url;
         System.out.println(shaStr);
-//        String sign = sha1(shaStr);
-
-//        System.out.println("sigin="+sign);
-//        data[0] = timestamp.toString();
-//        data[1] = noncestr;
-//        data[2] = sign;
         return data;
     }
 
@@ -93,28 +87,5 @@ public class WechatUtil {
         return sb.toString();
     }
 
-
-//    public static String sha1(String str) {
-//        try {
-//            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-//            digest.update(str.getBytes());
-//            byte messageDigest[] = digest.digest();
-//            // Create Hex String
-//            StringBuffer hexString = new StringBuffer();
-//            // 字节数组转换为 十六进制 数
-//            for (int i = 0; i < messageDigest.length; i++) {
-//                String shaHex = Integer.toHexString(messageDigest[i] & 0xFF);
-//                if (shaHex.length() < 2) {
-//                    hexString.append(0);
-//                }
-//                hexString.append(shaHex);
-//            }
-//            return hexString.toString();
-//
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
-//        return "";
-//    }
 
 }

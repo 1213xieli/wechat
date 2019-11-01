@@ -11,11 +11,11 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * 
+ *
 * @Title: Swagger
-* @Description: 
+ * @Description:
 * Swagger2配置
-* @Version:1.0.0  
+ * @Version:1.0.0
 * @author xieli
 * @date 2018年5月29日
  */
@@ -35,8 +35,8 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("springboot利用swagger构建api文档")
-                .description("简单优雅的restfun风格，http://blog.csdn.net/saytime")
-                .termsOfServiceUrl("http://blog.csdn.net/saytime")
+                .description("简单优雅的restfun风格，")
+                .termsOfServiceUrl("")
                 .version("1.0")
                 .build();
     }
