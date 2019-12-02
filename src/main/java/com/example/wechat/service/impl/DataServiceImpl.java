@@ -1,5 +1,6 @@
 package com.example.wechat.service.impl;
 
+import cn.hutool.core.util.EnumUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -283,12 +284,13 @@ public class DataServiceImpl implements IDataService {
         if (userlist == null || userlist.size() <= 0)
             return null;
 
-
+        // 不显示人员的配置
+        Map<String, CommonConst.WithdrawnEnum> enumMap = EnumUtil.getEnumMap(CommonConst.WithdrawnEnum.class);
         UserInfo defaultUser = new UserInfo();
         Map<String, List<UserInfo>> map = new HashedMap();
         int i = 1;
         for (UserInfo info : userlist) {
-            if (Func.checkNull(info.getUserid()) || !checkUserName(info.getName()))
+            if (Func.checkNull(info.getUserid()) || Func.checkNullOrEmpty(info.getName()))
                 continue;
 
             // 中英文转化 用户命名
@@ -303,6 +305,11 @@ public class DataServiceImpl implements IDataService {
 
             info.setUsershowname(username);
             info.setCompany(company);
+
+            // 不显示人员
+            if (enumMap.containsKey(username))
+                continue;
+
 
             if (info.getUserid().equals(CommonConst.defaultuserid))
                 defaultUser = info;

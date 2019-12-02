@@ -39,4 +39,9 @@ public class CommonConst {
     {
         上班打卡,下班打卡;
     }
+
+    public enum WithdrawnEnum {
+        罗娇, 周勇, 邵尤苏, 皮飞凡, 李晋, 何丽星, 朱铜芳, 黄旋, 成亮, 陈文平, 聂文斌, 江和志, 潘长德;
+    }
+
 }
